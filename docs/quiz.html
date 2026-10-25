@@ -1,0 +1,619 @@
+<!-- =====================================================================
+  QUIZ «¿CÓMO VOTO DESDE EL EXTRANJERO?» · Voto ERTA / CERA
+  Uso: pegar todo este código en un bloque «HTML personalizado» de WordPress.
+  Ajustes: objeto CFG al principio del script (año, logo, política de
+  privacidad y URL que recibe los emails).
+====================================================================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+#pvq,#pvq-modal{--r:#E30613;--rd:#B3000E;--rl:#FDECEE;--ink:#1D1D1B;--mut:#5E5E5E;--line:#E4E4E4;--g:#F3F3F3;--ok:#1F7A35;--okl:#E7F4EA;
+  font-family:'Montserrat',Arial,Helvetica,sans-serif;color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased}
+#pvq *,#pvq *::before,#pvq *::after,#pvq-modal *,#pvq-modal *::before,#pvq-modal *::after{box-sizing:border-box}
+#pvq [hidden],#pvq-modal [hidden],#pvq-modal[hidden]{display:none!important}
+#pvq h2,#pvq h3,#pvq h4,#pvq p,#pvq-modal h3,#pvq-modal p{margin:0;padding:0;font-family:inherit;color:inherit;text-transform:none;letter-spacing:normal}
+#pvq button,#pvq-modal button{font-family:inherit;text-transform:none;letter-spacing:normal;box-shadow:none;min-height:0;margin:0;cursor:pointer;-webkit-appearance:none;appearance:none}
+#pvq a,#pvq-modal a{color:var(--r);text-decoration:underline;text-underline-offset:2px}
+#pvq svg,#pvq-modal svg{flex-shrink:0;display:block}
+
+#pvq{max-width:780px;margin:0 auto;font-size:16px}
+#pvq .pvq-card{background:#fff;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 14px 44px rgba(0,0,0,.08)}
+
+/* Cabecera */
+#pvq .pvq-head{position:relative;background:var(--r);color:#fff;padding:30px 34px 30px;overflow:hidden}
+#pvq .pvq-head-deco{position:absolute;right:-26px;bottom:-34px;width:190px;height:190px;color:#fff;opacity:.12;pointer-events:none}
+#pvq .pvq-head-top{display:flex;align-items:center;gap:14px;margin-bottom:16px;position:relative}
+#pvq .pvq-logo{background:#fff;border-radius:8px;padding:6px 8px;display:flex}
+#pvq .pvq-logo img{height:34px;width:auto;display:block}
+#pvq .pvq-kicker{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;opacity:.9}
+#pvq .pvq-title{font-size:30px;font-weight:900;line-height:1.1;text-transform:uppercase;letter-spacing:-.01em;max-width:560px;position:relative;color:#fff}
+#pvq .pvq-sub{margin-top:12px;font-size:16px;font-weight:500;max-width:520px;opacity:.95;position:relative;color:#fff}
+
+/* Progreso */
+#pvq .pvq-progress{height:6px;background:var(--g)}
+#pvq .pvq-progress span{display:block;height:100%;width:15%;background:var(--ink);transition:width .45s ease}
+
+/* Cuerpo */
+#pvq .pvq-body{padding:32px 34px 34px}
+#pvq .pvq-anim{animation:pvqIn .35s ease both}
+@keyframes pvqIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+#pvq .pvq-step{font-size:12px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px}
+#pvq .pvq-q{font-size:23px;font-weight:800;line-height:1.25;margin-bottom:8px}
+#pvq .pvq-hint{color:var(--mut);font-size:15px;margin-bottom:4px}
+#pvq .pvq-opts{display:grid;gap:12px;margin-top:22px}
+#pvq .pvq-opt{display:flex;align-items:center;gap:16px;width:100%;text-align:left;background:#fff;border:2px solid var(--line);border-radius:12px;padding:16px 18px;color:var(--ink);font-size:16px;line-height:1.35;transition:border-color .15s,background .15s,transform .15s}
+#pvq .pvq-opt:hover{border-color:var(--r);background:var(--rl);transform:translateY(-1px)}
+#pvq .pvq-opt:focus-visible,#pvq button:focus-visible,#pvq-modal button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+#pvq .pvq-opt-ico{width:46px;height:46px;border-radius:10px;background:var(--rl);color:var(--r);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .15s,color .15s}
+#pvq .pvq-opt:hover .pvq-opt-ico{background:var(--r);color:#fff}
+#pvq .pvq-opt-txt{flex:1;min-width:0}
+#pvq .pvq-opt-txt strong{display:block;font-weight:700}
+#pvq .pvq-opt-txt small{display:block;color:var(--mut);font-size:14px;font-weight:500;margin-top:2px}
+#pvq .pvq-opt-arr{color:var(--r);opacity:.55;transition:opacity .15s,transform .15s}
+#pvq .pvq-opt:hover .pvq-opt-arr{opacity:1;transform:translateX(3px)}
+#pvq .pvq-nav{margin-top:22px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+#pvq .pvq-back{background:none;border:0;padding:6px 0;color:var(--mut);font-size:14px;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+#pvq .pvq-back:hover{color:var(--r)}
+
+/* Resultado */
+#pvq .pvq-res-head{display:flex;gap:20px;align-items:center;margin-bottom:20px}
+#pvq .pvq-badge{width:128px;height:128px;border-radius:14px;background:var(--r);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;text-align:center}
+#pvq .pvq-badge-k{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.9}
+#pvq .pvq-badge-v{font-size:38px;font-weight:900;line-height:1;margin-top:4px;letter-spacing:-.01em}
+#pvq .pvq-res-k{font-size:12px;font-weight:800;color:var(--r);text-transform:uppercase;letter-spacing:.12em;margin-bottom:6px}
+#pvq .pvq-res-title{font-size:23px;font-weight:800;line-height:1.2}
+#pvq .pvq-res-sub{color:var(--mut);font-size:14px;font-weight:600;margin-top:6px}
+#pvq .pvq-intro{font-size:16px;margin-bottom:6px}
+
+#pvq .pvq-alert{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:10px;background:var(--rl);border-left:5px solid var(--r);font-size:15px;margin:18px 0}
+#pvq .pvq-alert svg{color:var(--r);margin-top:1px}
+#pvq .pvq-alert--info{background:var(--g);border-left-color:var(--ink)}
+#pvq .pvq-alert--info svg{color:var(--ink)}
+#pvq .pvq-alert--ok{background:var(--okl);border-left-color:var(--ok)}
+#pvq .pvq-alert--ok svg{color:var(--ok)}
+
+#pvq .pvq-count{display:flex;gap:18px;align-items:center;border:2px solid var(--r);border-radius:12px;padding:16px 18px;margin:20px 0}
+#pvq .pvq-count-n{font-size:44px;font-weight:900;line-height:1;color:var(--r);text-align:center;min-width:72px}
+#pvq .pvq-count-n small{display:block;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+#pvq .pvq-count strong{display:block;font-size:16px;font-weight:800}
+#pvq .pvq-count p{font-size:15px;color:var(--mut);margin-top:2px}
+
+#pvq .pvq-sec{margin-top:30px}
+#pvq .pvq-h{font-size:17px;font-weight:900;color:var(--r);text-transform:uppercase;letter-spacing:.02em;margin:0 0 18px;padding-bottom:10px;border-bottom:3px solid var(--r);font-family:inherit}
+
+#pvq .pvq-steps{counter-reset:s;list-style:none;margin:0;padding:0}
+#pvq .pvq-steps li{counter-increment:s;position:relative;padding:0 0 22px 56px;margin:0;list-style:none}
+#pvq .pvq-steps li::before{content:counter(s);position:absolute;left:0;top:-3px;width:38px;height:38px;border-radius:50%;background:var(--r);color:#fff;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center}
+#pvq .pvq-steps li::after{content:"";position:absolute;left:18px;top:40px;bottom:6px;width:2px;background:var(--line)}
+#pvq .pvq-steps li:last-child{padding-bottom:4px}
+#pvq .pvq-steps li:last-child::after{display:none}
+#pvq .pvq-steps li.is-done::before{content:"\2713";background:var(--ok)}
+#pvq .pvq-st{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin-bottom:4px}
+#pvq .pvq-st strong{font-size:16px;font-weight:800}
+#pvq .pvq-tag{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;background:var(--ink);color:#fff;padding:3px 8px;border-radius:4px;white-space:nowrap}
+#pvq .pvq-steps p{font-size:15px;color:#3b3b3b}
+#pvq .pvq-sub-h{font-size:15px;font-weight:800;margin:6px 0 16px;text-transform:uppercase;letter-spacing:.04em}
+
+#pvq .pvq-tabs{display:flex;gap:8px;background:var(--g);padding:5px;border-radius:12px;margin-bottom:20px}
+#pvq .pvq-tab{flex:1;border:0;background:transparent;border-radius:9px;padding:11px 10px;font-weight:800;font-size:14px;color:var(--mut);display:flex;align-items:center;justify-content:center;gap:8px}
+#pvq .pvq-tab[aria-selected="true"]{background:#fff;color:var(--r);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+
+/* Tabla fechas clave (estilo de los documentos) */
+#pvq .pvq-table{width:100%;border-collapse:collapse;border:1px solid var(--ink);font-size:14px;margin:0}
+#pvq .pvq-table th{background:var(--r);color:#fff;font-weight:800;text-transform:uppercase;letter-spacing:.04em;text-align:left;padding:10px 12px;border:1px solid var(--ink);font-size:13px}
+#pvq .pvq-table td{padding:10px 12px;border:1px solid var(--ink);vertical-align:middle;background:#fff}
+#pvq .pvq-table tbody tr:nth-child(odd) td{background:#E6E6E6}
+#pvq .pvq-table td:first-child{font-weight:800;text-transform:uppercase;font-size:13px}
+#pvq .pvq-table td:nth-child(2){white-space:nowrap}
+#pvq .pvq-chip{display:inline-block;font-size:12px;font-weight:800;padding:4px 9px;border-radius:999px;white-space:nowrap}
+#pvq .pvq-chip--hot{background:var(--r);color:#fff}
+#pvq .pvq-chip--due{background:#fff;color:var(--r);border:1.5px solid var(--r)}
+#pvq .pvq-chip--soon{background:#fff;color:var(--ink);border:1.5px solid var(--ink)}
+#pvq .pvq-chip--open{background:var(--ok);color:#fff}
+#pvq .pvq-chip--off{background:#cfcfcf;color:#4a4a4a}
+
+/* Llamada al email */
+#pvq .pvq-cta{margin-top:30px;background:var(--r);color:#fff;border-radius:14px;padding:22px 24px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+#pvq .pvq-cta-ico{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center}
+#pvq .pvq-cta-txt{flex:1;min-width:220px}
+#pvq .pvq-cta-txt strong{display:block;font-size:18px;font-weight:900;text-transform:uppercase;line-height:1.2}
+#pvq .pvq-cta-txt span{font-size:15px;opacity:.95}
+#pvq .pvq-btn-w{background:#fff;color:var(--r);border:0;border-radius:8px;padding:13px 20px;font-weight:900;font-size:14px;text-transform:uppercase;letter-spacing:.05em;transition:transform .15s}
+#pvq .pvq-btn-w:hover{transform:translateY(-1px)}
+#pvq .pvq-cta.is-sub{background:var(--okl);color:var(--ink)}
+#pvq .pvq-cta.is-sub .pvq-cta-ico{background:var(--ok);color:#fff}
+
+/* Ayuda */
+#pvq .pvq-help{margin-top:22px;background:var(--g);border-radius:14px;padding:20px 22px}
+#pvq .pvq-help h4{font-size:15px;font-weight:900;text-transform:uppercase;margin:0 0 4px;color:var(--ink);font-family:inherit}
+#pvq .pvq-help p{font-size:14px;color:var(--mut)}
+#pvq .pvq-help-links{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 12px}
+#pvq .pvq-help-links a{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--ink);color:var(--ink);text-decoration:none;font-weight:700;font-size:14px;padding:9px 14px;border-radius:8px}
+#pvq .pvq-help-links a:hover{border-color:var(--r);color:var(--r)}
+#pvq .pvq-off{font-size:13px;color:var(--mut)}
+#pvq .pvq-off a{color:var(--ink)}
+
+#pvq .pvq-foot{margin-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+#pvq .pvq-restart{background:#fff;border:2px solid var(--ink);color:var(--ink);border-radius:8px;padding:10px 16px;font-weight:800;font-size:14px;display:inline-flex;align-items:center;gap:8px}
+#pvq .pvq-restart:hover{border-color:var(--r);color:var(--r)}
+#pvq .pvq-free{font-size:13px;font-weight:700;color:var(--mut)}
+
+/* Ventana del email */
+html.pvq-lock{overflow:hidden}
+#pvq-modal{position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;padding:16px;font-size:16px}
+#pvq-modal .pvqm-ov{position:absolute;inset:0;background:rgba(20,20,20,.62);animation:pvqFade .25s ease both}
+#pvq-modal .pvqm-dlg{position:relative;width:100%;max-width:460px;max-height:calc(100vh - 32px);overflow:auto;background:#fff;border-radius:16px;box-shadow:0 24px 70px rgba(0,0,0,.35);animation:pvqPop .3s ease both}
+@keyframes pvqFade{from{opacity:0}}
+@keyframes pvqPop{from{opacity:0;transform:translateY(14px) scale(.98)}}
+#pvq-modal .pvqm-x{position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;justify-content:center;padding:0}
+#pvq-modal .pvqm-x:hover{background:rgba(255,255,255,.35)}
+#pvq-modal .pvqm-top{background:var(--r);color:#fff;padding:26px 26px 22px}
+#pvq-modal .pvqm-ico{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;margin-bottom:12px}
+#pvq-modal .pvqm-k{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.9;color:#fff}
+#pvq-modal h3{font-size:25px;font-weight:900;text-transform:uppercase;line-height:1.1;margin-top:4px;color:#fff}
+#pvq-modal .pvqm-body{padding:22px 26px 26px}
+#pvq-modal .pvqm-txt{font-size:15px;color:#3b3b3b;margin-bottom:16px}
+#pvq-modal label{display:block;font-size:13px;font-weight:800;margin:0 0 12px;color:var(--ink);text-transform:none;letter-spacing:normal}
+#pvq-modal label span.opt{font-weight:500;color:var(--mut)}
+#pvq-modal input[type=text],#pvq-modal input[type=email]{display:block;width:100%;margin-top:6px;font-family:inherit;font-size:16px;font-weight:500;color:var(--ink);background:#fff;border:2px solid var(--line);border-radius:8px;padding:12px 14px;box-shadow:none;height:auto;line-height:1.3;outline:none}
+#pvq-modal input[type=text]:focus,#pvq-modal input[type=email]:focus{border-color:var(--r)}
+#pvq-modal .pvqm-check{display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:13px;color:var(--mut);margin-top:4px}
+#pvq-modal .pvqm-check input{width:18px;height:18px;margin:1px 0 0;accent-color:var(--r);flex-shrink:0}
+#pvq-modal .pvqm-err{font-size:14px;font-weight:700;color:var(--r);margin:4px 0 10px}
+#pvq-modal .pvqm-btn{width:100%;background:var(--r);color:#fff;border:0;border-radius:8px;padding:15px 18px;font-weight:900;font-size:15px;text-transform:uppercase;letter-spacing:.06em;margin-top:8px;transition:background .15s}
+#pvq-modal .pvqm-btn:hover{background:var(--rd)}
+#pvq-modal .pvqm-btn[disabled]{opacity:.7;cursor:wait}
+#pvq-modal .pvqm-no{display:block;margin:12px auto 0;background:none;border:0;color:var(--mut);font-size:13px;font-weight:700;text-decoration:underline;padding:4px}
+#pvq-modal .pvqm-done{text-align:center;padding:8px 0 4px}
+#pvq-modal .pvqm-done-ico{width:60px;height:60px;border-radius:50%;background:var(--okl);color:var(--ok);display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+#pvq-modal .pvqm-done strong{display:block;font-size:20px;font-weight:900;text-transform:uppercase;margin-bottom:6px}
+#pvq-modal .pvqm-done p{font-size:15px;color:#3b3b3b}
+
+@media (max-width:600px){
+  #pvq .pvq-head{padding:24px 20px}
+  #pvq .pvq-title{font-size:23px}
+  #pvq .pvq-sub{font-size:15px}
+  #pvq .pvq-body{padding:24px 18px 26px}
+  #pvq .pvq-q{font-size:20px}
+  #pvq .pvq-opt{padding:14px;gap:12px}
+  #pvq .pvq-opt-ico{width:40px;height:40px}
+  #pvq .pvq-res-head{gap:14px}
+  #pvq .pvq-badge{width:92px;height:92px}
+  #pvq .pvq-badge-v{font-size:27px}
+  #pvq .pvq-res-title{font-size:19px}
+  #pvq .pvq-count-n{font-size:36px;min-width:58px}
+  #pvq .pvq-table thead{display:none}
+  #pvq .pvq-table,#pvq .pvq-table tbody{display:block;border:0}
+  #pvq .pvq-table tr{display:grid;grid-template-columns:1fr auto;border:1px solid var(--ink);border-top:0}
+  #pvq .pvq-table tr:first-child{border-top:1px solid var(--ink)}
+  #pvq .pvq-table td{border:0}
+  #pvq .pvq-table td:first-child{grid-column:1/-1;padding-bottom:2px}
+  #pvq .pvq-table td:nth-child(2){padding-top:2px}
+  #pvq .pvq-table td:nth-child(3){padding-top:2px;text-align:right}
+  #pvq .pvq-tab{font-size:13px}
+  #pvq-modal .pvqm-top{padding:22px 20px 18px}
+  #pvq-modal .pvqm-body{padding:18px 20px 22px}
+}
+@media (prefers-reduced-motion:reduce){
+  #pvq *,#pvq-modal *{animation:none!important;transition:none!important}
+}
+</style>
+
+<div id="pvq" lang="es">
+  <div class="pvq-card">
+    <div class="pvq-head">
+      <svg class="pvq-head-deco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 13h18v8H3z"/><path d="M7 13V3h10v10"/><path d="M9.5 8l2 2 3.5-4"/></svg>
+      <div class="pvq-head-top">
+        <span class="pvq-logo" hidden></span>
+        <span class="pvq-kicker">Voto desde el extranjero</span>
+      </div>
+      <h2 class="pvq-title">¿Cómo voto si estoy fuera de España?</h2>
+      <p class="pvq-sub">Responde a tres preguntas y te decimos qué tipo de voto te corresponde y qué tienes que hacer en cada momento.</p>
+    </div>
+    <div class="pvq-progress" aria-hidden="true"><span></span></div>
+    <div class="pvq-body" aria-live="polite"></div>
+  </div>
+</div>
+
+<div id="pvq-modal" lang="es" hidden>
+  <div class="pvqm-ov" data-close></div>
+  <div class="pvqm-dlg" role="dialog" aria-modal="true" aria-labelledby="pvqm-title">
+    <button type="button" class="pvqm-x" data-close aria-label="Cerrar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+    <div class="pvqm-top">
+      <div class="pvqm-ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21a2 2 0 0 0 4 0"/></svg></div>
+      <p class="pvqm-k">Que no se te pase ningún plazo</p>
+      <h3 id="pvqm-title">Te informamos de todo</h3>
+    </div>
+    <div class="pvqm-body">
+      <form class="pvqm-form" novalidate>
+        <p class="pvqm-txt" data-txt>Déjanos tu email y te avisaremos de cada fecha clave: cuándo llega la documentación, cuándo votar y hasta cuándo.</p>
+        <label>Nombre <span class="opt">(opcional)</span>
+          <input type="text" name="nombre" autocomplete="given-name" placeholder="Tu nombre">
+        </label>
+        <label>Correo electrónico
+          <input type="email" name="email" required autocomplete="email" placeholder="tu@email.com">
+        </label>
+        <label class="pvqm-check">
+          <input type="checkbox" name="consentimiento" value="si" required>
+          <span>He leído y acepto la <a data-privacy href="#" target="_blank" rel="noopener">política de privacidad</a> y quiero recibir información sobre el proceso electoral.</span>
+        </label>
+        <input type="hidden" name="tipo_voto" value="">
+        <input type="hidden" name="perfil" value="">
+        <p class="pvqm-err" role="alert" hidden></p>
+        <button type="submit" class="pvqm-btn">Quiero que me aviséis</button>
+        <button type="button" class="pvqm-no" data-close>Ahora no</button>
+      </form>
+      <div class="pvqm-done" hidden>
+        <div class="pvqm-done-ico"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></div>
+        <strong>¡Hecho!</strong>
+        <p>Te escribiremos a <b data-mail></b> antes de cada fecha clave.</p>
+        <button type="button" class="pvqm-btn" data-close style="margin-top:18px">Volver a mis pasos</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* ================= CONFIGURACIÓN ================= */
+  var CFG = {
+    year: 2026,                                  // año de las fechas del proceso
+    logoUrl: '',                                 // URL del logo (Biblioteca de medios). Vacío = sin logo
+    privacyUrl: '/politica-de-privacidad/',      // enlace a la política de privacidad
+    formEndpoint: '',                            // URL que recibe el formulario por POST. Vacío = modo demostración
+    popupDelayMs: 1400,                          // retraso de la ventana del email tras el resultado
+    contactEmail: 'electopsoe@psoe.es',
+    whatsapp: '639856691'
+  };
+  /* ================================================= */
+
+  var root = document.getElementById('pvq');
+  var modal = document.getElementById('pvq-modal');
+  if (!root || !modal) return;
+  document.body.appendChild(modal);
+
+  var body = root.querySelector('.pvq-body');
+  var bar = root.querySelector('.pvq-progress span');
+  var card = root.querySelector('.pvq-card');
+
+  if (CFG.logoUrl) {
+    var lg = root.querySelector('.pvq-logo');
+    lg.innerHTML = '<img src="' + CFG.logoUrl + '" alt="PSOE">';
+    lg.hidden = false;
+  }
+
+  /* ---------- Fechas ---------- */
+  var MES = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  var DIA = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  function D(m, d){ return new Date(CFG.year, m - 1, d); }
+  var F = {
+    ertaSolicitud: D(10,31), ertaDoc: D(11,17), ertaVoto: D(11,25),
+    ceraDoc: D(10,24), ceraPapeletas: D(11,4), ceraCorreo: D(11,24), ceraUrnaIni: D(11,21), ceraUrnaFin: D(11,26)
+  };
+  function fL(d){ return DIA[d.getDay()] + ' ' + d.getDate() + ' de ' + MES[d.getMonth()]; }
+  function fM(d){ return d.getDate() + ' de ' + MES[d.getMonth()]; }
+  function fS(d){ return d.getDate() + ' ' + MES[d.getMonth()].slice(0,3); }
+  function days(d){ var n = new Date(); var t = new Date(n.getFullYear(), n.getMonth(), n.getDate()); return Math.round((d - t) / 864e5); }
+  var OFF = {cls:'off', txt:'Cerrado'};
+  function stUntil(d){ var n = days(d); if (n < 0) return OFF; if (n === 0) return {cls:'hot', txt:'Último día'}; return {cls: n <= 7 ? 'hot' : 'due', txt: n === 1 ? 'Queda 1 día' : 'Quedan ' + n + ' días'}; }
+  function stFrom(d){ var n = days(d); if (n > 0) return {cls:'soon', txt: n === 1 ? 'Mañana' : 'En ' + n + ' días'}; return {cls:'open', txt:'En marcha'}; }
+  function stRange(a, b){ var n = days(a), m = days(b); if (m < 0) return OFF; if (n > 0) return {cls:'soon', txt:'En ' + n + ' días'}; return {cls:'open', txt: m === 0 ? 'Último día' : 'Abierto'}; }
+
+  /* ---------- Iconos ---------- */
+  var IC = {
+    suitcase:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+    globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+    home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+    check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+    cross:'<path d="M6 6l12 12M18 6L6 18"/>',
+    question:'<circle cx="12" cy="12" r="9"/><path d="M9.6 9.4a2.5 2.5 0 1 1 3.4 2.4c-.6.3-1 .8-1 1.5v.5"/><circle cx="12" cy="17.2" r=".7" fill="currentColor"/>',
+    mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+    ballot:'<path d="M3 13h18v8H3z"/><path d="M7 13V3h10v10"/><path d="M9.5 8l2 2 3.5-4"/>',
+    arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+    back:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+    bell:'<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21a2 2 0 0 0 4 0"/>',
+    alert:'<path d="M12 3l10 18H2z"/><path d="M12 10v5"/><circle cx="12" cy="18" r=".7" fill="currentColor"/>',
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6"/><circle cx="12" cy="7.6" r=".7" fill="currentColor"/>',
+    chat:'<path d="M4 20l1.5-4A8 8 0 1 1 9 19.4z"/>',
+    restart:'<path d="M4 4v6h6"/><path d="M4.5 15a8 8 0 1 0 1.9-8.3L4 10"/>'
+  };
+  function ico(n, s){ s = s || 22; return '<svg width="' + s + '" height="' + s + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + IC[n] + '</svg>'; }
+
+  /* ---------- Preguntas ---------- */
+  var Q = {
+    inicio: { n:1, q:'¿Cuál es tu situación durante estas elecciones?',
+      hint:'Si te has ido a vivir a otro país, aunque sea hace poco, elige la segunda opción.',
+      opts:[
+        {i:'suitcase', t:'Vivo fuera temporalmente, o nunca he pensado en censarme fuera', d:'Por trabajo, estudios, Erasmus, un viaje…', go:'erta_solicitud'},
+        {i:'globe', t:'Vivo fuera de España de forma permanente', d:'Resido habitualmente en otro país', go:'cera_inscrito'},
+        {i:'home', t:'Vivo en España y estaré aquí para votar', d:'No voy a estar en el extranjero', go:'R:espana'}
+      ]},
+    erta_solicitud: { n:2, q:'¿Ya has entregado la solicitud de voto en el consulado?',
+      hint:'La solicitud se entrega en persona en el consulado o la embajada de España de la zona en la que te encuentras.',
+      opts:[
+        {i:'check', t:'Sí, ya la he entregado', go:'R:erta_ok'},
+        {i:'clock', t:'No, todavía no', go:'erta_inscrito'}
+      ]},
+    erta_inscrito: { n:3, q:'¿Estás inscrito en el Registro de Matrícula Consular como «no residente»?',
+      hint:'Es el registro de españoles del consulado. Para el voto ERTA tienes que figurar como no residente.',
+      opts:[
+        {i:'check', t:'Sí, como no residente', go:'R:erta_pend_insc'},
+        {i:'cross', t:'No estoy inscrito', go:'R:erta_pend_noinsc'},
+        {i:'question', t:'No lo sé', go:'R:erta_pend_noinsc'}
+      ]},
+    cera_inscrito: { n:2, q:'¿Estás inscrito en el consulado como residente permanente?',
+      hint:'Es decir, en el Registro de Matrícula Consular de la embajada o el consulado del país donde vives.',
+      opts:[
+        {i:'check', t:'Sí, estoy inscrito', go:'cera_modo'},
+        {i:'question', t:'No, o no estoy seguro', go:'R:cera_noinsc'}
+      ]},
+    cera_modo: { n:3, q:'¿Cómo prefieres votar?',
+      hint:'Puedes enviar tu voto por correo o depositarlo en urna en el consulado.',
+      opts:[
+        {i:'mail', t:'Por correo', d:'Hasta el ' + fL(F.ceraCorreo), go:'R:cera_correo'},
+        {i:'ballot', t:'En urna, en el consulado', d:'Del ' + F.ceraUrnaIni.getDate() + ' al ' + fM(F.ceraUrnaFin), go:'R:cera_urna'},
+        {i:'question', t:'Aún no lo sé', d:'Te explicamos las dos opciones', go:'R:cera_ambos'}
+      ]}
+  };
+
+  /* ---------- Piezas de resultado ---------- */
+  function head(badge, k, title, sub){
+    var b = badge.icon ? ico(badge.icon, 56) : '<span class="pvq-badge-k">Tu voto es</span><span class="pvq-badge-v">' + badge.txt + '</span>';
+    return '<div class="pvq-res-head"><div class="pvq-badge">' + b + '</div><div><p class="pvq-res-k">' + k + '</p><h3 class="pvq-res-title">' + title + '</h3>' + (sub ? '<p class="pvq-res-sub">' + sub + '</p>' : '') + '</div></div>';
+  }
+  function alert(type, html){
+    var i = type === 'info' ? 'info' : type === 'ok' ? 'check' : 'alert';
+    return '<div class="pvq-alert' + (type ? ' pvq-alert--' + type : '') + '">' + ico(i, 20) + '<div>' + html + '</div></div>';
+  }
+  function step(t, p, tag, done){
+    return '<li' + (done ? ' class="is-done"' : '') + '><div class="pvq-st"><strong>' + t + '</strong>' + (tag ? '<span class="pvq-tag">' + tag + '</span>' : '') + '</div><p>' + p + '</p></li>';
+  }
+  function steps(items, start){
+    return '<ol class="pvq-steps"' + (start ? ' style="counter-reset:s ' + start + '"' : '') + '>' + items.join('') + '</ol>';
+  }
+  function sec(title, inner){ return '<div class="pvq-sec"><h4 class="pvq-h">' + title + '</h4>' + inner + '</div>'; }
+  function table(rows){
+    return sec('Fechas clave', '<table class="pvq-table"><thead><tr><th>Proceso</th><th>Fecha</th><th>Estado</th></tr></thead><tbody>' +
+      rows.map(function(r){ return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td><span class="pvq-chip pvq-chip--' + r[2].cls + '">' + r[2].txt + '</span></td></tr>'; }).join('') +
+      '</tbody></table>');
+  }
+  function cta(){
+    if (subscribed) return '<div class="pvq-cta is-sub"><div class="pvq-cta-ico">' + ico('check', 24) + '</div><div class="pvq-cta-txt"><strong>Ya estás apuntado</strong><span>Te avisaremos antes de cada fecha clave.</span></div></div>';
+    return '<div class="pvq-cta"><div class="pvq-cta-ico">' + ico('bell', 24) + '</div><div class="pvq-cta-txt"><strong>¿Te avisamos de cada plazo?</strong><span>Déjanos tu email y te recordaremos cada paso hasta que tu voto llegue a su destino.</span></div><button type="button" class="pvq-btn-w" data-open-modal>Avísame</button></div>';
+  }
+  function help(){
+    return '<div class="pvq-help"><h4>¿Tienes más dudas?</h4><p>Escríbenos y te ayudamos con tu caso.</p>' +
+      '<div class="pvq-help-links"><a href="mailto:' + CFG.contactEmail + '">' + ico('mail', 18) + CFG.contactEmail + '</a>' +
+      '<a href="https://wa.me/34' + CFG.whatsapp + '" target="_blank" rel="noopener">' + ico('chat', 18) + 'WhatsApp ' + CFG.whatsapp + '</a></div>' +
+      '<p class="pvq-off">Webs oficiales: <a href="https://www.infoelectoral.interior.es" target="_blank" rel="noopener">infoelectoral.interior.es</a> · <a href="https://www.exteriores.gob.es" target="_blank" rel="noopener">exteriores.gob.es</a> · <a href="https://www.ine.es" target="_blank" rel="noopener">ine.es</a></p></div>';
+  }
+  function foot(free){
+    return '<div class="pvq-foot"><button type="button" class="pvq-restart" data-restart>' + ico('restart', 18) + 'Volver a empezar</button>' + (free ? '<span class="pvq-free">Todos los trámites del voto por correo son gratuitos.</span>' : '') + '</div>';
+  }
+
+  var noMesa = '<strong>Importante:</strong> si tu solicitud de voto ERTA es aceptada, <strong>no podrás votar en persona en tu mesa electoral</strong> el día de las elecciones.';
+  var ertaHead = function(){ return head({txt:'ERTA'}, 'Tu tipo de voto', 'Voto de residentes temporales fuera de España', 'Español Residente Temporalmente Ausente'); };
+  var ceraHead = function(){ return head({txt:'CERA'}, 'Tu tipo de voto', 'Voto de residentes permanentes fuera de España', 'Censo Electoral de Residentes Ausentes'); };
+  var ertaTable = function(){ return table([
+    ['Solicitud del voto', 'Hasta el ' + fM(F.ertaSolicitud), stUntil(F.ertaSolicitud)],
+    ['Recepción de la documentación', 'Hasta el ' + fM(F.ertaDoc), stUntil(F.ertaDoc)],
+    ['Envío del voto', 'Hasta el ' + fM(F.ertaVoto), stUntil(F.ertaVoto)]
+  ]); };
+  var ceraTable = function(){ return table([
+    ['Envío de documentación', 'Desde el ' + fM(F.ceraDoc), stFrom(F.ceraDoc)],
+    ['Recepción o descarga de papeletas', 'Desde el ' + fM(F.ceraPapeletas), stFrom(F.ceraPapeletas)],
+    ['Envío del voto por correo', 'Hasta el ' + fM(F.ceraCorreo), stUntil(F.ceraCorreo)],
+    ['Voto en urna en el consulado', 'Del ' + F.ceraUrnaIni.getDate() + ' al ' + fM(F.ceraUrnaFin), stRange(F.ceraUrnaIni, F.ceraUrnaFin)]
+  ]); };
+
+  var ertaVotoSteps = [
+    step('Mete cada papeleta en su sobre', 'Cada una en el sobre de su color: la blanca, del Congreso, en el sobre blanco; la sepia, del Senado, en el sobre sepia.'),
+    step('Prepara el sobre para tu Mesa Electoral', 'Dentro van los sobres de votación con su papeleta y el certificado de inscripción en el censo. Si quieres recuperar los gastos de envío, añade también ese impreso.'),
+    step('Envíalo por correo certificado', 'Hazlo cuanto antes para asegurarte de que llega a tiempo. Es imprescindible que el sobre lleve el matasellos u otra marca oficial de la oficina de correos que acredite que lo enviaste dentro de plazo.', 'Hasta el ' + fS(F.ertaVoto))
+  ];
+  var docERTA = 'Incluye las papeletas y los sobres de votación, el certificado de inscripción en el censo, el sobre dirigido a tu Mesa Electoral, el impreso para recuperar los gastos de envío y una hoja explicativa.';
+
+  var ceraComun = [
+    step('Recibe la documentación en casa', 'Llega al domicilio que consta en el Registro de Matrícula Consular: el sobre de votación, dos certificados idénticos de inscripción en el censo, el sobre dirigido a la Junta Electoral Provincial, el sobre dirigido a tu Oficina Consular, una hoja informativa y la lista de centros donde votar en urna.', 'Desde el ' + fS(F.ceraDoc)),
+    step('Consigue tus papeletas', 'Te llegarán también a tu domicilio. Si lo prefieres, puedes descargarlas e imprimirlas desde la web oficial.', 'Desde el ' + fS(F.ceraPapeletas))
+  ];
+  var ceraCorreo = [
+    step('Mete la papeleta en el sobre de votación', 'Es el sobre de votación que viene con tu documentación.'),
+    step('Prepara el sobre de la Junta Electoral Provincial', 'Dentro: el sobre de votación y uno de los certificados de inscripción censal, <strong>firmado y con tu número de DNI o pasaporte</strong>.'),
+    step('Prepara el sobre de la Oficina Consular', 'Dentro: el sobre de la Junta Electoral Provincial y el otro certificado de inscripción censal.'),
+    step('Envíalo por correo', 'Mándalo por correo postal, certificado siempre que sea posible, a tu Oficina Consular o Sección Consular de la Misión Diplomática.', 'Hasta el ' + fS(F.ceraCorreo))
+  ];
+  var ceraUrna = [
+    step('Localiza tu centro de votación', 'Consulta la lista de centros habilitados para votar en urna en tu demarcación consular. Viene con tu documentación.'),
+    step('Prepara lo que tienes que llevar', 'Un documento para identificarte (pasaporte, DNI, certificado de nacionalidad o certificado de inscripción en el Registro de Matrícula Consular), un certificado de inscripción en el censo y el sobre dirigido a la Junta Electoral Provincial con el sobre de votación dentro.'),
+    step('Vota en urna', 'Entrega al funcionario consular el certificado de inscripción en el censo y el sobre dirigido a la Junta Electoral Provincial.', 'Del ' + F.ceraUrnaIni.getDate() + ' al ' + fS(F.ceraUrnaFin)),
+    step('Comprueba el sello', 'El funcionario consular debe firmar, numerar y sellar el reverso del sobre con la fecha en que lo depositas.')
+  ];
+  var ceraIntro = '<p class="pvq-intro"><strong>No tienes que solicitar el voto.</strong> Desde la reforma de la Ley Electoral basta con estar inscrito en el Registro de Matrícula Consular como residente permanente: la documentación te llegará a casa.</p>';
+
+  var R = {
+    erta_ok: { tipo:'ERTA', html:function(){
+      return ertaHead() +
+        '<p class="pvq-intro">Ya has hecho lo más importante. Ahora la Oficina del Censo Electoral te enviará la documentación a la dirección en el extranjero que indicaste en tu solicitud, a través del correo local.</p>' +
+        alert('', noMesa) +
+        sec('Próximos pasos', steps([
+          step('Solicitud de voto entregada', 'Ya está hecho.', '', true),
+          step('Recibe tu documentación electoral', 'Te llegará a tu dirección en el extranjero. ' + docERTA, 'Hasta el ' + fS(F.ertaDoc))
+        ].concat(ertaVotoSteps))) +
+        ertaTable() + cta() + help() + foot(true);
+    }},
+    erta_pend_insc: { tipo:'ERTA', html:function(){ return ertaPend(true); }},
+    erta_pend_noinsc: { tipo:'ERTA', html:function(){ return ertaPend(false); }},
+    cera_correo: { tipo:'CERA', html:function(){
+      return ceraHead() + ceraIntro + sec('Próximos pasos', steps(ceraComun.concat(ceraCorreo))) + ceraTable() + cta() + help() + foot(true);
+    }},
+    cera_urna: { tipo:'CERA', html:function(){
+      return ceraHead() + ceraIntro + sec('Próximos pasos', steps(ceraComun.concat(ceraUrna))) + ceraTable() + cta() + help() + foot(false);
+    }},
+    cera_ambos: { tipo:'CERA', html:function(){
+      return ceraHead() + ceraIntro +
+        sec('Próximos pasos', steps(ceraComun) +
+          '<p class="pvq-sub-h" style="margin-top:20px">Después, elige cómo votar:</p>' +
+          '<div class="pvq-tabs" role="tablist">' +
+            '<button type="button" class="pvq-tab" role="tab" aria-selected="true" data-tab="correo">' + ico('mail', 18) + 'Por correo</button>' +
+            '<button type="button" class="pvq-tab" role="tab" aria-selected="false" data-tab="urna">' + ico('ballot', 18) + 'En urna</button>' +
+          '</div>' +
+          '<div data-panel="correo">' + steps(ceraCorreo, 2) + '</div>' +
+          '<div data-panel="urna" hidden>' + steps(ceraUrna, 2) + '</div>') +
+        ceraTable() + cta() + help() + foot(true);
+    }},
+    cera_noinsc: { tipo:'CERA', html:function(){
+      return head({txt:'CERA'}, 'Tu voto sería', 'Voto de residentes permanentes fuera de España', 'Censo Electoral de Residentes Ausentes') +
+        alert('', 'Para votar desde el país en el que vives tienes que figurar inscrito en el <strong>Registro de Matrícula Consular como residente permanente</strong>.') +
+        sec('Próximos pasos', steps([
+          step('Comprueba tu inscripción', 'Contacta cuanto antes con el consulado o la embajada de España del país en el que vives y confirma si figuras inscrito como residente permanente.'),
+          step('Si ya estás inscrito', 'No necesitas solicitar el voto: la documentación llegará al domicilio que consta en el Registro. Vuelve a hacer el test marcando que estás inscrito para ver todos tus pasos.', 'Desde el ' + fS(F.ceraDoc)),
+          step('Si tienes dudas, escríbenos', 'Te ayudamos a revisar tu caso por email o por WhatsApp.')
+        ])) +
+        ceraTable() + cta() + help() + foot(false);
+    }},
+    espana: { tipo:'Mesa electoral en España', html:function(){
+      return head({icon:'ballot'}, 'Tu caso', 'Votas desde España', 'Este asistente es para quien vota desde el extranjero') +
+        '<p class="pvq-intro">Si vas a estar en España el día de las elecciones, no tienes que hacer ningún trámite de voto exterior: puedes votar en persona en tu mesa electoral.</p>' +
+        alert('info', 'Si cambian tus planes y vas a estar fuera de España, vuelve a hacer el test: el voto ERTA se solicita en persona en el consulado <strong>hasta el ' + fL(F.ertaSolicitud) + '</strong>.') +
+        cta() + help() + foot(false);
+    }}
+  };
+
+  function ertaPend(inscrito){
+    var n = days(F.ertaSolicitud);
+    if (n < 0) {
+      return ertaHead() +
+        alert('', 'El plazo para solicitar el voto ERTA terminó el <strong>' + fL(F.ertaSolicitud) + '</strong>. Si tienes dudas sobre tu caso, escríbenos y lo revisamos contigo.') +
+        ertaTable() + cta() + help() + foot(false);
+    }
+    var big = n === 0 ? 'HOY<small>último día</small>' : n + '<small>' + (n === 1 ? 'día' : 'días') + '</small>';
+    var paso2 = inscrito
+      ? step('Inscripción como «no residente»', 'Ya figuras en el Registro de Matrícula Consular como no residente, así que puedes ir directamente a la solicitud.', '', true)
+      : step('Inscríbete como «no residente»', 'En el Registro de Matrícula Consular. <strong>Fíjate bien en la modalidad:</strong> si por error te das de alta como «residente», perderías tu empadronamiento en España.');
+    return ertaHead() +
+      '<p class="pvq-intro">Como vas a estar fuera de España de forma temporal, tienes que pedir el voto <strong>en persona</strong> en el consulado o la embajada de España de la zona donde te encuentres.</p>' +
+      '<div class="pvq-count"><div class="pvq-count-n">' + big + '</div><div><strong>Para pedir tu voto en el consulado</strong><p>Tienes hasta el ' + fL(F.ertaSolicitud) + '. No lo dejes para el final: es un trámite presencial.</p></div></div>' +
+      sec('Próximos pasos', steps([
+        step('Ve en persona a tu consulado o embajada', 'Acude a la Oficina Consular de España de la demarcación en la que te encuentras.', 'Hasta el ' + fS(F.ertaSolicitud)),
+        paso2,
+        step('Rellena y entrega la solicitud de voto', 'Entrégala personalmente en el consulado o la embajada. Revisa bien la dirección en el extranjero que indicas: es a donde te enviarán la documentación.'),
+        step('Recibe tu documentación electoral', 'La Delegación Provincial de la Oficina del Censo Electoral te la enviará por el correo local. ' + docERTA, 'Hasta el ' + fS(F.ertaDoc))
+      ].concat(ertaVotoSteps))) +
+      alert('', noMesa) +
+      ertaTable() + cta() + help() + foot(true);
+  }
+
+  /* ---------- Navegación ---------- */
+  var hist = [], cur = 'inicio', lastTipo = '', popped = false, subscribed = false, timer = null;
+  var PROG = {1:15, 2:50, 3:80};
+
+  function render(target){
+    cur = target;
+    clearTimeout(timer);
+    if (target.indexOf('R:') === 0) {
+      var key = target.slice(2), r = R[key];
+      lastTipo = r.tipo;
+      body.innerHTML = '<div class="pvq-anim">' + r.html() + '<div class="pvq-nav"><button type="button" class="pvq-back" data-back>' + ico('back', 16) + 'Cambiar mi última respuesta</button></div></div>';
+      bar.style.width = '100%';
+      setModalTipo(key, r.tipo);
+      if (!popped && !subscribed) timer = setTimeout(function(){ popped = true; openModal(); }, CFG.popupDelayMs);
+    } else {
+      var q = Q[target];
+      body.innerHTML = '<div class="pvq-anim"><p class="pvq-step">Pregunta ' + q.n + ' de 3</p><h3 class="pvq-q">' + q.q + '</h3>' + (q.hint ? '<p class="pvq-hint">' + q.hint + '</p>' : '') +
+        '<div class="pvq-opts">' + q.opts.map(function(o){
+          return '<button type="button" class="pvq-opt" data-go="' + o.go + '"><span class="pvq-opt-ico">' + ico(o.i, 24) + '</span><span class="pvq-opt-txt"><strong>' + o.t + '</strong>' + (o.d ? '<small>' + o.d + '</small>' : '') + '</span><span class="pvq-opt-arr">' + ico('arrow', 20) + '</span></button>';
+        }).join('') + '</div>' +
+        (hist.length ? '<div class="pvq-nav"><button type="button" class="pvq-back" data-back>' + ico('back', 16) + 'Atrás</button></div>' : '') + '</div>';
+      bar.style.width = PROG[q.n] + '%';
+    }
+    var top = card.getBoundingClientRect().top;
+    if (top < 0) card.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  body.addEventListener('click', function(e){
+    var t = e.target.closest('button'); if (!t) return;
+    if (t.hasAttribute('data-go')) { hist.push(cur); render(t.getAttribute('data-go')); var f = body.querySelector('.pvq-opt,.pvq-res-title'); if (f && f.focus) f.focus({preventScroll:true}); }
+    else if (t.hasAttribute('data-back')) { if (hist.length) render(hist.pop()); }
+    else if (t.hasAttribute('data-restart')) { hist = []; render('inicio'); }
+    else if (t.hasAttribute('data-open-modal')) { openModal(); }
+    else if (t.hasAttribute('data-tab')) {
+      var name = t.getAttribute('data-tab');
+      body.querySelectorAll('[data-tab]').forEach(function(b){ b.setAttribute('aria-selected', b === t ? 'true' : 'false'); });
+      body.querySelectorAll('[data-panel]').forEach(function(p){ p.hidden = p.getAttribute('data-panel') !== name; });
+    }
+  });
+
+  /* ---------- Ventana del email ---------- */
+  var form = modal.querySelector('form'), done = modal.querySelector('.pvqm-done'), err = modal.querySelector('.pvqm-err');
+  var sendBtn = modal.querySelector('.pvqm-btn'), sendLabel = sendBtn.textContent, lastFocus = null;
+  modal.querySelector('[data-privacy]').href = CFG.privacyUrl;
+
+  function setModalTipo(key, tipo){
+    form.tipo_voto.value = tipo; form.perfil.value = key;
+    var txt = modal.querySelector('[data-txt]');
+    txt.innerHTML = (tipo === 'ERTA' || tipo === 'CERA')
+      ? 'Déjanos tu email y te avisaremos de cada fecha clave de tu <strong>voto ' + tipo + '</strong>: cuándo llega la documentación, cuándo votar y hasta cuándo.'
+      : 'Déjanos tu email y te mantendremos informado de todas las novedades y fechas clave de las elecciones.';
+  }
+  function openModal(){
+    clearTimeout(timer);
+    lastFocus = document.activeElement;
+    modal.hidden = false;
+    document.documentElement.classList.add('pvq-lock');
+    var f = subscribed ? done.querySelector('button') : form.email;
+    setTimeout(function(){ f.focus(); }, 60);
+  }
+  function closeModal(){
+    modal.hidden = true;
+    document.documentElement.classList.remove('pvq-lock');
+    if (lastFocus && lastFocus.focus) lastFocus.focus({preventScroll:true});
+  }
+  modal.addEventListener('click', function(e){ if (e.target.closest('[data-close]')) closeModal(); });
+  document.addEventListener('keydown', function(e){
+    if (modal.hidden) return;
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'Tab') {
+      var els = Array.prototype.filter.call(modal.querySelectorAll('button,input,a'), function(el){ return el.offsetParent !== null; });
+      if (!els.length) return;
+      var a = els[0], z = els[els.length - 1];
+      if (e.shiftKey && document.activeElement === a) { e.preventDefault(); z.focus(); }
+      else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); }
+    }
+  });
+  function showErr(m){ err.textContent = m; err.hidden = false; }
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault(); err.hidden = true;
+    var email = form.email;
+    if (!email.value.trim() || !email.checkValidity()) { showErr('Escribe un correo electrónico válido.'); email.focus(); return; }
+    if (!form.consentimiento.checked) { showErr('Para continuar, acepta la política de privacidad.'); return; }
+    var fd = new FormData(form), data = {};
+    fd.forEach(function(v, k){ data[k] = v; });
+    data.fecha = new Date().toISOString();
+    fd.append('fecha', data.fecha);
+    sendBtn.disabled = true; sendBtn.textContent = 'Enviando…';
+    var req = CFG.formEndpoint
+      ? fetch(CFG.formEndpoint, {method:'POST', body:fd}).then(function(r){ if (!r.ok) throw new Error(r.status); })
+      : Promise.resolve().then(function(){ console.info('[Quiz voto exterior] Modo demostración (sin formEndpoint). Datos:', data); });
+    req.then(function(){
+      document.dispatchEvent(new CustomEvent('pvq:lead', {detail:data}));
+      subscribed = true;
+      done.querySelector('[data-mail]').textContent = email.value.trim();
+      form.hidden = true; done.hidden = false;
+      done.querySelector('button').focus();
+      var c = body.querySelector('.pvq-cta');
+      if (c) c.outerHTML = cta();
+    }).catch(function(){
+      showErr('No hemos podido enviar tus datos. Inténtalo de nuevo en unos minutos.');
+    }).then(function(){ sendBtn.disabled = false; sendBtn.textContent = sendLabel; });
+  });
+
+  render('inicio');
+})();
+</script>
